@@ -301,11 +301,12 @@ server.post("/api/contact", async function contactForm(req, res) {
 server.get("/", async (req, res) => {
   res.send({ message: "Backend is live 🚀" });
 });
-
+const HOST = "0.0.0.0";
 const start = async () => {
   try {
     await server.listen({
       port: PORT,
+      host: HOST,
     });
     console.log(`Server listening on port ${PORT}`);
   } catch (err) {

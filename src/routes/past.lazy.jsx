@@ -2,8 +2,7 @@ import { useState, Suspense, use } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { useQuery } from "@tanstack/react-query";
 import { createLazyFileRoute } from "@tanstack/react-router";
-import getPastOrders from "../api/getPastOrders";
-import getPastOrder from "../api/getPastOrder";
+
 import Modal from "../Modal";
 import { priceConverter } from "../../useCurrency";
 export const Route = createLazyFileRoute("/past")({
@@ -13,7 +12,13 @@ function ErrorBoundaryWrappedPastOrderRoutes() {
   const [page, setPage] = useState(1);
   const loadedPromise = useQuery({
     queryKey: ["past-orders", page],
-    queryFn: () => getPastOrders(page),
+    queryFn: async () => {
+      const response = await fetch(`/api/past-orders?page=${page}`);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    },
     staleTime: 30000,
   }).promise;
   return (
@@ -39,7 +44,13 @@ function PastOrdersRoute({ page, setPage, loadedPromise }) {
   const [focusedOrder, setFocusedOrder] = useState();
   const { isLoading: isLoadingPastOrder, data: pastOrderData } = useQuery({
     queryKey: ["past-order", focusedOrder],
-    queryFn: () => getPastOrder(focusedOrder),
+    queryFn: async () => {
+      const response = await fetch(`/api/past-order/${focusedOrder}`);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    },
     staleTime: 86400000,
     enabled: !!focusedOrder,
   });

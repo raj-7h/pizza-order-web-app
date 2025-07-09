@@ -304,7 +304,9 @@ server.get("/", async (req, res) => {
 
 const start = async () => {
   try {
-    await server.listen({ port: PORT, host: "0.0.0.0" });
+    await server.listen({
+      port: PORT,
+    });
     console.log(`Server listening on port ${PORT}`);
   } catch (err) {
     console.error(err);

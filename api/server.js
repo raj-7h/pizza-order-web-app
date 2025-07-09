@@ -298,6 +298,10 @@ server.post("/api/contact", async function contactForm(req, res) {
   res.send({ success: "Message received" });
 });
 
+server.get("/", async (req, res) => {
+  res.send({ message: "Backend is live 🚀" });
+});
+
 const start = async () => {
   try {
     await server.listen({ port: PORT, host: "0.0.0.0" });

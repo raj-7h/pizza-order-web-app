@@ -1,8 +1,6 @@
 import { useFormState } from "react-dom";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
-import postContact from "../api/postContact";
-import { disabled } from "happy-dom/lib/PropertySymbol.js";
 
 export const Route = createLazyFileRoute("/contact")({
   component: ContactRoute,
@@ -10,12 +8,22 @@ export const Route = createLazyFileRoute("/contact")({
 
 function ContactRoute() {
   const mutation = useMutation({
-    mutationFn: function (formData) {
-      return postContact(
-        formData.get("name"),
-        formData.get("email"),
-        formData.get("message"),
-      );
+    mutationFn: async (formData) => {
+      const res = await fetch("/api/postContact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.get("name"),
+          email: formData.get("email"),
+          message: formData.get("message"),
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to submit contact form");
+      }
+
+      return res.json();
     },
   });
   if (mutation.isError) {
